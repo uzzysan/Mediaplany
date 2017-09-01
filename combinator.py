@@ -3,6 +3,7 @@
 
 import os, re
 from openpyxl import load_workbook, Workbook
+from openpyxl.utils import get_column_letter
 import numpy as np
 import pandas as pd
 from pandas import Series, DataFrame
@@ -35,7 +36,10 @@ for filename in mediaplany:
         except:
             print('\t! -> Nie znalazłem arkusza {} w pliku {}, pomijam.'.format(arkusz, filename))
             continue
-        
+
+        lastRow = 0
+
+        #Ustala ostatni wiersz danych
         searchCol = ws['A']
         sumaInRow = 0
         for searchCell in searchCol:
@@ -44,6 +48,17 @@ for filename in mediaplany:
                 lastRow = sumaInRow - 1
                 print('\tOstatni wiersz danych w {} to {}'.format(arkusz, lastRow))
             else: continue
+
+        #Ustala ostatnią kolumnę danych
+        searchRow = ws[3]
+        sumaInCol = 0
+        for searchCell in searchRow:
+            sumaInCol += 1
+            if searchCell.value != 'ga:source':
+                continue
+            else:
+                kolumna = get_column_letter(sumaInCol)
+                print('\tOstatnia kolumna danych to: {}'.format(kolumna))
 
         wiersz = 0
         for row in ws.iter_rows(min_row=4, max_col=113, max_row=lastRow):
