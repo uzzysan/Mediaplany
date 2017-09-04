@@ -14,8 +14,7 @@ def listMpFiles():
     return mpFiles
 
 mediaplany = listMpFiles()
-arkusze = ['LIC - MP', 'LIC - H', 'SUM - MP', 'SUM - H', 'SP - MP', 'SP - H', 'MBA - MP', 'MBA - H', 'Szkolenia - MP', 'Ogólne']
-
+arkusze = ('LIC - MP', 'LIC - H', 'SUM - MP', 'SUM - H', 'SP - MP', 'SP - H', 'MBA - MP', 'MBA - H', 'Szkolenia - MP', 'Ogólne')
 finalDF = pd.DataFrame()
 
 for fileName in mediaplany:
@@ -24,13 +23,16 @@ for fileName in mediaplany:
         try:
             df = pd.read_excel(fileName,
                                sheetname=arkusz,
-                               header=0,
-                               skiprows=2,
+                               header=None,
+                               skiprows=3,
+                               index_col=None,
                                skip_footer=0,
+                               parse_cols='A:J,AB:CC,CE:DJ',
                                na_values='')
-
+            df.dropna(axis=0, how='all')
             finalDF = finalDF.append(df)
             print('\t+ Arkusz {} OK!'.format(arkusz))
+
         except:
             print('\t! Nie znalazłem arkusza {} w pliku {}, pomijam.'.format(arkusz, fileName))
             continue
