@@ -13,6 +13,12 @@ def listMpFiles():
     print('Znalazłem {} plików excela.'.format(numFiles))
     return mpFiles
 
+def clean_df(dataframes):
+    summary_text = 'SUMA'
+    for df in dataframes:
+        index_after_suma = df.index.str.startswith(summary_text).cumsum()
+        yield df.loc[~index_after_suma, :]
+
 mediaplany = listMpFiles()
 arkusze = ('LIC - MP', 'LIC - H', 'SUM - MP', 'SUM - H', 'SP - MP', 'SP - H', 'MBA - MP', 'MBA - H', 'Szkolenia - MP', 'Ogólne')
 finalDF = pd.DataFrame()
@@ -29,6 +35,7 @@ for fileName in mediaplany:
                                skip_footer=0,
                                parse_cols='A:J,AB:CC,CE:DJ',
                                na_values='')
+            clean_df(df)
             df.dropna(axis=0, how='all')
             finalDF = finalDF.append(df)
             print('\t+ Arkusz {} OK!'.format(arkusz))
